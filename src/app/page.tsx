@@ -183,7 +183,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 </div>
                 <div>
                     <h3 className={`${cormorant.className} text-3xl text-sky-700 font-bold mb-1`}>Resepsi</h3>
-                    <p className="font-semibold text-sky-600"><Clock size={14} className="inline mr-1" /> 11:00 - Selesai</p>
+                    <p className="font-semibold text-sky-600"><Clock size={14} className="inline mr-1" /> 09:00 WIB</p>
                 </div>
                 </div>
                 <div className="w-px h-10 bg-sky-200 my-6"></div>
