@@ -47,7 +47,7 @@ const itemVariants: Variants = {
 
 
 // =================================================================
-// COUNTDOWN TIMER COMPONENT (FIXED FOR DEPLOYMENT)
+// COUNTDOWN TIMER COMPONENT
 // =================================================================
 interface CountdownTimerProps {
   targetDate: string;
@@ -148,13 +148,10 @@ const Cover: React.FC<CoverProps> = ({ onOpen, targetDate }) => {
         <motion.h1 variants={itemVariants} className={`${greatVibes.className} text-8xl text-sky-900`}>Feby</motion.h1>
         <motion.p variants={itemVariants} className={`${cormorant.className} text-4xl text-sky-500 my-2`}>&</motion.p>
         <motion.h1 variants={itemVariants} className={`${greatVibes.className} text-8xl text-sky-900 mb-8`}>Fauzi</motion.h1>
-
         <motion.div variants={itemVariants} className="border-t border-b border-sky-300 py-4">
           <p className="text-sky-800 font-semibold tracking-widest text-sm">06 . 09 . 2025</p>
         </motion.div>
-
         <CountdownTimer targetDate={targetDate} />
-
         <motion.button
           onClick={onOpen} 
           className="bg-sky-800 hover:bg-sky-700 text-white px-8 py-3 rounded-full font-semibold shadow-md transition-colors" 
@@ -188,21 +185,14 @@ interface MainContentProps {
 const MainContent: React.FC<MainContentProps> = ({
   navItems, activeSection, isNavOpen, setIsNavOpen, scrollToSection, copyToClipboard, showNotification, notificationMessage
 }) => {
-  // --- [ UPDATE DI SINI ] ---
-  // 1. Dapatkan URL ini dari Google Maps > Share > Embed a map.
-  //    Salin HANYA URL yang ada di dalam src="..."
   const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.63999928592!2d101.52022737575916!3d0.5562779632128737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5ac8a3429302d%3A0xe6e8436037b27528!2sSPBU%20SUKA%20MAKMUR!5e0!3m2!1sen!2sid!4v1694080054812!5m2!1sen!2sid";
-
-  // 2. Ini adalah link untuk tombol "Buka Google Maps". Gunakan link share biasa.
   const MAP_DIRECTION_URL = "https://goo.gl/maps/9EpSuiYRHa3aSx6a7";
-  // --- [ SELESAI ] ---
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.8, ease: "easeInOut", delay: 0.5 } }}
     >
-      {/* Navigation */}
       <motion.div className="fixed top-5 right-5 z-50" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, duration: 0.5, type: "spring" }}>
         <motion.button className="w-12 h-12 bg-sky-800 rounded-full shadow-lg flex items-center justify-center text-white" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setIsNavOpen(!isNavOpen)} type="button" aria-label="Toggle navigation menu">
           <AnimatePresence mode="wait">
@@ -224,8 +214,6 @@ const MainContent: React.FC<MainContentProps> = ({
           )}
         </AnimatePresence>
       </motion.div>
-
-      {/* Notification */}
       <AnimatePresence>
         {showNotification && (
           <motion.div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-5 py-2 rounded-full shadow-lg flex items-center gap-2" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}>
@@ -234,7 +222,6 @@ const MainContent: React.FC<MainContentProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Couple Section */}
       <section id="couple" className="min-h-screen bg-white px-8 py-20 text-center">
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
           <motion.div className="mb-12" variants={itemVariants}>
@@ -246,11 +233,10 @@ const MainContent: React.FC<MainContentProps> = ({
               وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِقَوْمٍ يَتَفَكَّرُونَ
             </p>
             <p className="font-serif-display italic text-slate-600 mt-6 text-sm leading-relaxed">
-              "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."
+              “Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.”
             </p>
             <p className="mt-4 font-sans font-semibold text-sky-700">(QS. Ar-Rum: 21)</p>
           </motion.div>
-
           <motion.div className="space-y-10" variants={itemVariants}>
             <div>
               <h3 className={`${greatVibes.className} text-5xl text-sky-900`}>Feby Wulandari</h3>
@@ -267,7 +253,6 @@ const MainContent: React.FC<MainContentProps> = ({
         </motion.div>
       </section>
 
-      {/* Event Section */}
       <section id="event" className="min-h-screen bg-sky-50 px-8 py-20 text-center">
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
           <motion.div className="mb-12" variants={itemVariants}>
@@ -300,7 +285,6 @@ const MainContent: React.FC<MainContentProps> = ({
         </motion.div>
       </section>
 
-      {/* Gift Section */}
       <section id="gift" className="min-h-screen bg-white px-8 py-20">
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
           <motion.div className="text-center mb-12" variants={itemVariants}>
@@ -321,7 +305,6 @@ const MainContent: React.FC<MainContentProps> = ({
         </motion.div>
       </section>
 
-      {/* Location Section */}
       <section id="location" className="min-h-screen bg-sky-50 px-8 py-20">
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}>
           <motion.div className="text-center mb-12" variants={itemVariants}>
@@ -344,14 +327,11 @@ const MainContent: React.FC<MainContentProps> = ({
               <p className="font-semibold text-sky-800">Kediaman Mempelai Wanita</p>
               <p className="text-sm text-sky-500 mt-1">SP 2 Blok A Suka Makmur, Kec. Gunung Sahilan, Kab. Kampar - Riau</p>
             </div>
-            {/* [FIXED] window.open(URL, '_blank') adalah format yang benar */}
             <motion.button onClick={() => window.open(MAP_DIRECTION_URL, '_blank')} className="w-full bg-sky-800 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-sky-700 transition-colors" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <ExternalLink size={16} /> Buka Google Maps
             </motion.button>
           </motion.div>
         </motion.div>
-
-        {/* Footer */}
         <motion.div className="text-center mt-20 pt-10 border-t border-sky-200" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={itemVariants}>
           <p className={`${cormorant.className} italic text-sky-600 max-w-md mx-auto mb-6`}>Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p>
           <h3 className={`${greatVibes.className} text-5xl text-sky-800`}>Feby & Fauzi</h3>
@@ -404,7 +384,8 @@ const WeddingInvitation: React.FC = () => {
     try {
       await navigator.clipboard.writeText(text);
       showNotificationMessage(successMessage);
-    } catch (_err) {
+    } catch (error) {
+      console.error("Failed to copy text: ", error);
       showNotificationMessage('Gagal menyalin ke clipboard');
     }
   };
