@@ -142,7 +142,7 @@ const Cover: React.FC<CoverProps> = ({ onOpen, targetDate }) => {
 
         <CountdownTimer targetDate={targetDate} />
 
-        <motion.button 
+        <motion.button
           onClick={onOpen} 
           className="bg-sky-800 hover:bg-sky-700 text-white px-8 py-3 rounded-full font-semibold shadow-md transition-colors" 
           variants={itemVariants} 
