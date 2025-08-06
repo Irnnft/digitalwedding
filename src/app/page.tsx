@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import {
   Menu, X, MapPin, Calendar, Heart, Gift, Copy, ExternalLink, Users, CheckCircle, Clock
@@ -28,7 +28,6 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
 }
-
 interface TimeLeft {
   Hari: number;
   Jam: number;
@@ -48,18 +47,19 @@ const itemVariants: Variants = {
 
 
 // =================================================================
-// COUNTDOWN TIMER COMPONENT
+// COUNTDOWN TIMER COMPONENT (FIXED FOR DEPLOYMENT)
 // =================================================================
 interface CountdownTimerProps {
   targetDate: string;
 }
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
-  // useCallback digunakan untuk memoize fungsi kalkulasi agar tidak dibuat ulang pada setiap render.
+  const [isMounted, setIsMounted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<Partial<TimeLeft>>({});
+
   const calculateTimeLeft = useCallback((): Partial<TimeLeft> => {
     const difference = +new Date(targetDate) - +new Date();
     let timeLeft: Partial<TimeLeft> = {};
-
     if (difference > 0) {
       timeLeft = {
         Hari: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -71,19 +71,33 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     return timeLeft;
   }, [targetDate]);
 
-  const [timeLeft, setTimeLeft] = useState<Partial<TimeLeft>>(calculateTimeLeft());
-
   useEffect(() => {
-    // Set interval untuk memperbarui waktu setiap detik.
+    setIsMounted(true);
+    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-
-    // Membersihkan interval saat komponen di-unmount untuk mencegah memory leak.
     return () => clearInterval(timer);
   }, [calculateTimeLeft]);
 
   const timeUnits: (keyof TimeLeft)[] = ['Hari', 'Jam', 'Menit', 'Detik'];
+
+  if (!isMounted) {
+    return (
+      <motion.div
+        variants={itemVariants}
+        className="flex justify-center space-x-4 md:space-x-6 my-8 p-4 bg-sky-100/50 rounded-lg border border-sky-200/80"
+      >
+        {timeUnits.map((unit) => (
+          <div key={unit} className="flex flex-col items-center w-16">
+            <div className="text-3xl font-bold text-sky-800">--</div>
+            <div className="text-xs text-sky-600 uppercase tracking-wider">{unit}</div>
+          </div>
+        ))}
+      </motion.div>
+    );
+  }
+
   const eventHasPassed = Object.keys(timeLeft).length === 0;
 
   return (
@@ -93,13 +107,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     >
       {eventHasPassed ? (
         <div className={`${cormorant.className} text-sky-800 font-semibold italic`}>
-          The event has concluded. Thank you for your wishes!
+          The event has concluded. Thank you!
         </div>
       ) : (
         timeUnits.map((unit) => {
           const value = timeLeft[unit];
           if (typeof value === 'undefined') return null;
-
           return (
             <div key={unit} className="flex flex-col items-center w-16">
               <div className="text-3xl font-bold text-sky-800">
@@ -175,8 +188,14 @@ interface MainContentProps {
 const MainContent: React.FC<MainContentProps> = ({
   navItems, activeSection, isNavOpen, setIsNavOpen, scrollToSection, copyToClipboard, showNotification, notificationMessage
 }) => {
-  const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15959.25597140889!2d101.39180784013458!3d0.1986169829929286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d1c7f555555555%3A0x6e2b1e771a3964f4!2sSuka%20Makmur!5e0!3m2!1sen!2sid!4v1662345678901";
-  const MAP_DIRECTION_URL = "https://www.google.com/maps/dir/?api=1&destination=0.198617,101.401146";
+  // --- [ UPDATE DI SINI ] ---
+  // 1. Dapatkan URL ini dari Google Maps > Share > Embed a map.
+  //    Salin HANYA URL yang ada di dalam src="..."
+  const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.63999928592!2d101.52022737575916!3d0.5562779632128737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5ac8a3429302d%3A0xe6e8436037b27528!2sSPBU%20SUKA%20MAKMUR!5e0!3m2!1sen!2sid!4v1694080054812!5m2!1sen!2sid";
+
+  // 2. Ini adalah link untuk tombol "Buka Google Maps". Gunakan link share biasa.
+  const MAP_DIRECTION_URL = "https://goo.gl/maps/9EpSuiYRHa3aSx6a7";
+  // --- [ SELESAI ] ---
 
   return (
     <motion.div
@@ -325,6 +344,7 @@ const MainContent: React.FC<MainContentProps> = ({
               <p className="font-semibold text-sky-800">Kediaman Mempelai Wanita</p>
               <p className="text-sm text-sky-500 mt-1">SP 2 Blok A Suka Makmur, Kec. Gunung Sahilan, Kab. Kampar - Riau</p>
             </div>
+            {/* [FIXED] window.open(URL, '_blank') adalah format yang benar */}
             <motion.button onClick={() => window.open(MAP_DIRECTION_URL, '_blank')} className="w-full bg-sky-800 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-sky-700 transition-colors" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <ExternalLink size={16} /> Buka Google Maps
             </motion.button>
@@ -352,10 +372,6 @@ const WeddingInvitation: React.FC = () => {
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [notificationMessage, setNotificationMessage] = useState<string>('');
   
-  // Ref untuk elemen audio, agar bisa dikontrol (misal: play/pause).
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Tanggal pernikahan untuk countdown. Format: YYYY-MM-DDTHH:mm:ss
   const weddingDate = "2025-09-06T09:00:00";
 
   const navItems: NavItem[] = useMemo(() => [
@@ -367,11 +383,6 @@ const WeddingInvitation: React.FC = () => {
 
   const handleOpenInvitation = () => {
     setIsInvitationOpen(true);
-    // Coba putar audio. Browser modern mungkin memblokir autoplay
-    // jika tidak ada interaksi pengguna, tapi klik ini dihitung sebagai interaksi.
-    audioRef.current?.play().catch(error => {
-      console.error("Audio play failed:", error);
-    });
   };
 
   const scrollToSection = (sectionId: string): void => {
@@ -418,9 +429,6 @@ const WeddingInvitation: React.FC = () => {
 
   return (
     <div className={`w-full max-w-md mx-auto bg-sky-50 shadow-xl min-h-screen relative ${questrial.className}`}>
-      {/* Elemen audio, disembunyikan tapi bisa dikontrol via audioRef */}
-      <audio ref={audioRef} src="/music/wedding-song.mp3" loop preload="auto" />
-
       <AnimatePresence mode="wait">
         {
           !isInvitationOpen ? (
